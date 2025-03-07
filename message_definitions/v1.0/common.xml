@@ -8101,5 +8101,27 @@
       <field type="int16_t" name="temperature" units="cdegC">Temperature</field>
       <field type="uint16_t" name="humidity" units="c%">Humidity</field>
     </message>
+
+    <message id="16000" name="RADAR_ODOMETRY">
+      <description>Radar Odometry message to communicate odometry information with an external interface. Fits ROS REP 147 standard for aerial vehicles (http://www.ros.org/reps/rep-0147.html).</description>
+      <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
+      <field type="uint8_t" name="frame_id" enum="MAV_FRAME">Coordinate frame of reference for the pose data.</field>
+      <field type="uint8_t" name="child_frame_id" enum="MAV_FRAME">Coordinate frame of reference for the velocity in free space (twist) data.</field>
+      <field type="float" name="x" units="m">X Position</field>
+      <field type="float" name="y" units="m">Y Position</field>
+      <field type="float" name="z" units="m">Z Position</field>
+      <field type="float[4]" name="q">Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation)</field>
+      <field type="float" name="vx" units="m/s">X linear speed</field>
+      <field type="float" name="vy" units="m/s">Y linear speed</field>
+      <field type="float" name="vz" units="m/s">Z linear speed</field>
+      <field type="float" name="rollspeed" units="rad/s">Roll angular speed</field>
+      <field type="float" name="pitchspeed" units="rad/s">Pitch angular speed</field>
+      <field type="float" name="yawspeed" units="rad/s">Yaw angular speed</field>
+      <field type="float[21]" name="pose_covariance" invalid="[NaN:]">Row-major representation of a 6x6 pose cross-covariance matrix upper right triangle (states: x, y, z, roll, pitch, yaw; first six entries are the first ROW, next five entries are the second ROW, etc.). If unknown, assign NaN value to first element in the array.</field>
+      <field type="float[21]" name="velocity_covariance" invalid="[NaN:]">Row-major representation of a 6x6 velocity cross-covariance matrix upper right triangle (states: vx, vy, vz, rollspeed, pitchspeed, yawspeed; first six entries are the first ROW, next five entries are the second ROW, etc.). If unknown, assign NaN value to first element in the array.</field>
+      <field type="uint8_t" name="reset_counter">Estimate reset counter. This should be incremented when the estimate resets in any of the dimensions (position, velocity, attitude, angular speed). This is designed to be used when e.g an external SLAM system detects a loop-closure and the estimate jumps.</field>
+      <field type="uint8_t" name="estimator_type" enum="MAV_ESTIMATOR_TYPE">Type of estimator that is providing the odometry.</field>
+      <field type="int8_t" name="quality" units="%" invalid="0">Optional odometry quality metric as a percentage. -1 = odometry has failed, 0 = unknown/unset quality, 1 = worst quality, 100 = best quality</field>
+    </message>
   </messages>
 </mavlink>
