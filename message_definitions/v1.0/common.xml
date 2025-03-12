@@ -3300,6 +3300,9 @@
       <entry value="8" name="MAV_ESTIMATOR_TYPE_AUTOPILOT">
         <description>Estimator on autopilot.</description>
       </entry>
+      <entry value="9" name="MAV_ESTIMATOR_TYPE_RADAR">
+        <description>Estimator based on radar sensor input.</description>
+      </entry>
     </enum>
     <enum name="MAV_BATTERY_TYPE">
       <description>Enumeration of battery types</description>
