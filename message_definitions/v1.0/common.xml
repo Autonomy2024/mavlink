@@ -4616,6 +4616,34 @@
         <description>Generic arming failure, see error string for details.</description>
       </entry>
     </enum>
+    <enum name="MAV_RADAR_POS_TYPE">
+      <entry value="0" name="MAV_RADAR_POS_TYPE_LOCAL">
+        <description>Radar odom pos in local frame.</description>
+      </entry>
+      <entry value="1" name="MAV_RADAR_POS_TYPE_NED">
+        <description>Radar odom pos in ned frame.</description>
+      </entry>
+    </enum>
+    <enum name="MAV_RADAR_ODOM_TYPE_VALID">
+      <entry value="0" name="MAV_RADAR_ODOM_INVALID">
+        <description>Radar odom pos in local frame.</description>
+      </entry>
+      <entry value="1" name="MAV_RADAR_ODOM_POSITION_VALID">
+        <description>Radar odom pos in ned frame.</description>
+      </entry>
+      <entry value="2" name="MAV_RADAR_ODOM_ORIENTATION_VALID">
+        <description>Radar odom pos in ned frame.</description>
+      </entry>
+      <entry value="4" name="MAV_RADAR_ODOM_VELOCITY_GLOBAL_VALID">
+        <description>Radar odom global velocity valid.</description>
+      </entry>
+      <entry value="8" name="MAV_RADAR_ODOM_VELOCITY_BODY_VALID">
+        <description>Radar odom ORIENTATION valid.</description>
+      </entry>
+      <entry value="255" name="RADAR_LOCATION_VALID">
+        <description>Radar odom all valid.</description>
+      </entry>
+    </enum>
     <enum name="TUNE_FORMAT">
       <description>Tune formats (used for vehicle buzzer/tone generation).</description>
       <entry value="1" name="TUNE_FORMAT_QBASIC1_1">
@@ -8108,23 +8136,23 @@
     <message id="16000" name="RADAR_ODOMETRY">
       <description>Radar Odometry message to communicate odometry information with an external interface. Fits ROS REP 147 standard for aerial vehicles (http://www.ros.org/reps/rep-0147.html).</description>
       <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
-      <field type="uint8_t" name="frame_id" enum="MAV_FRAME">Coordinate frame of reference for the pose data.</field>
-      <field type="uint8_t" name="child_frame_id" enum="MAV_FRAME">Coordinate frame of reference for the velocity in free space (twist) data.</field>
-      <field type="float" name="x" units="m">X Position</field>
-      <field type="float" name="y" units="m">Y Position</field>
-      <field type="float" name="z" units="m">Z Position</field>
-      <field type="float[4]" name="q">Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation)</field>
-      <field type="float" name="vx" units="m/s">X linear speed</field>
-      <field type="float" name="vy" units="m/s">Y linear speed</field>
-      <field type="float" name="vz" units="m/s">Z linear speed</field>
-      <field type="float" name="rollspeed" units="rad/s">Roll angular speed</field>
-      <field type="float" name="pitchspeed" units="rad/s">Pitch angular speed</field>
-      <field type="float" name="yawspeed" units="rad/s">Yaw angular speed</field>
-      <field type="float[21]" name="pose_covariance" invalid="[NaN:]">Row-major representation of a 6x6 pose cross-covariance matrix upper right triangle (states: x, y, z, roll, pitch, yaw; first six entries are the first ROW, next five entries are the second ROW, etc.). If unknown, assign NaN value to first element in the array.</field>
-      <field type="float[21]" name="velocity_covariance" invalid="[NaN:]">Row-major representation of a 6x6 velocity cross-covariance matrix upper right triangle (states: vx, vy, vz, rollspeed, pitchspeed, yawspeed; first six entries are the first ROW, next five entries are the second ROW, etc.). If unknown, assign NaN value to first element in the array.</field>
-      <field type="uint8_t" name="reset_counter">Estimate reset counter. This should be incremented when the estimate resets in any of the dimensions (position, velocity, attitude, angular speed). This is designed to be used when e.g an external SLAM system detects a loop-closure and the estimate jumps.</field>
-      <field type="uint8_t" name="estimator_type" enum="MAV_ESTIMATOR_TYPE">Type of estimator that is providing the odometry.</field>
-      <field type="int8_t" name="quality" units="%" invalid="0">Optional odometry quality metric as a percentage. -1 = odometry has failed, 0 = unknown/unset quality, 1 = worst quality, 100 = best quality</field>
+      <field type="float[3]" name="p_body_in_global" units="m">uav position in global frame</field>
+      <field type="float[3]" name="v_global" units="m">uav velocity in global frame</field>
+      <field type="float[4]" name="q_body_to_global"> Quaternion from body to global: w,x,y,z (1 0 0 0 is the null-rotation)</field>
+      <field type="float[3]" name="bias_acc">acc bias of imu</field>
+      <field type="float[3]" name="bias_gyro_deg">gyro bias of imu</field>
+      <field type="float" name="bias_alt" units="m">barometer</field>
+      <field type="float[3]" name="v_body" units="m/s">uav velocity in body frame</field>
+      <field type="float[3]" name="p_body_in_global_std">Roll angular speed</field>
+      <field type="float[3]" name="v_global_std">Pitch angular speed</field>
+      <field type="float[3]" name="eul_deg_body_to_global_std">Yaw angular speed</field>
+      <field type="float[3]" name="bias_acc_std">Row-major representation of a 6x6 pose cross-covariance matrix upper right triangle (states: x, y, z, roll, pitch, yaw; first six entries are the first ROW, next five entries are the second ROW, etc.). If unknown, assign NaN value to first element in the array.</field>
+      <field type="float[3]" name="bias_gyro_deg_std" invalid="[NaN:]">Row-major representation of a 6x6 velocity cross-covariance matrix upper right triangle (states: vx, vy, vz, rollspeed, pitchspeed, yawspeed; first six entries are the first ROW, next five entries are the second ROW, etc.). If unknown, assign NaN value to first element in the array.</field>
+      <field type="float" name="bias_alt_std">Estimate reset counter. This should be incremented when the estimate resets in any of the dimensions (position, velocity, attitude, angular speed). This is designed to be used when e.g an external SLAM system detects a loop-closure and the estimate jumps.</field>
+      <field type="float[3]" name="v_body_std">Type of estimator that is providing the odometry.</field>
+      <field type="uint8_t" name="global_position_type" enum="MAV_RADAR_POS_TYPE">Radar position type</field>
+      <field type="uint8_t" name="is_valid" enum="MAV_RADAR_ODOM_TYPE_VALID">radar odom valid type</field>
+      <field type="uint8_t" name="fusion_type">radar odom fusion type</field>
     </message>
   </messages>
 </mavlink>
